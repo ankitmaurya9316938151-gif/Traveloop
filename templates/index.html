@@ -12,6 +12,27 @@
         <input type="number" name="budget" placeholder="Budget" required>
         <button type="submit" class="btn btn-primary">Add Trip</button>
     </form>
+    <div class="mt-5">
+    <h3>Planned Trips</h3>
+    <table class="table table-striped shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Destination</th>
+                <th>Budget (₹)</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trip in trips %}
+            <tr>
+                <td>{{ trip.destination }}</td>
+                <td>₹{{ trip.budget }}</td>
+                <td><span class="badge bg-info">Upcoming</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
     <ul class="list-group">
         {% for trip in trips %}
