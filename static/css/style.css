@@ -1,0 +1,123 @@
+/* --- GLOBAL RESET & TRANSITIONS --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Container for all content to sit above the animations */
+.content-wrapper {
+    position: relative;
+    z-index: 10;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* --- THE NATURAL ENVIRONMENTS --- */
+
+/* 1. MISTY HILLS BACKGROUND */
+body.env-hills {
+    background: linear-gradient(to bottom, #87ceeb 0%, #f0f8ff 100%);
+}
+body.env-hills::before, body.env-hills::after {
+    content: '';
+    position: fixed;
+    bottom: -10%;
+    left: -25%;
+    width: 150%;
+    height: 60%;
+    background: #2d5a27;
+    clip-path: ellipse(60% 40% at 50% 100%);
+    z-index: -1;
+    animation: drift 20s ease-in-out infinite alternate;
+}
+body.env-hills::after {
+    height: 40%;
+    background: #1e3d1a;
+    animation-duration: 12s;
+    animation-direction: alternate-reverse;
+    opacity: 0.9;
+}
+
+/* 2. DEEP OCEAN BACKGROUND */
+body.env-ocean {
+    background: linear-gradient(180deg, #1e90ff 0%, #001a33 100%);
+}
+body.env-ocean::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        rgba(255,255,255,0.05) 0px,
+        rgba(255,255,255,0.05) 20px,
+        transparent 20px,
+        transparent 40px
+    );
+    z-index: -1;
+    animation: oceanFlow 15s linear infinite;
+}
+
+/* 3. EXTREME WATERFALL BACKGROUND */
+body.env-waterfall {
+    background: #1a1a1a;
+    background: radial-gradient(circle at center, #2c3e50, #000);
+}
+body.env-waterfall::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+    background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.8) 50%,
+        rgba(255,255,255,0) 100%
+    );
+    background-size: 100% 80px;
+    z-index: -1;
+    animation: fall 0.6s linear infinite;
+}
+
+/* 4. BURNING DESERT BACKGROUND */
+body.env-desert {
+    background: linear-gradient(#ffcc33, #ff6600);
+}
+body.env-desert::before {
+    content: '';
+    position: fixed;
+    bottom: -10%; left: -10%; width: 120%; height: 40%;
+    background: #e2a76f;
+    border-radius: 50% 50% 0 0;
+    z-index: -1;
+    filter: blur(2px);
+    animation: heatHaze 3s ease-in-out infinite;
+}
+
+/* --- ANIMATION KEYFRAMES --- */
+
+@keyframes drift {
+    from { transform: translateX(-5%) scale(1); }
+    to { transform: translateX(5%) scale(1.05); }
+}
+
+@keyframes oceanFlow {
+    from { background-position: 0 0; }
+    to { background-position: 1000px 1000px; }
+}
+
+@keyframes fall {
+    from { background-position: 0 0; }
+    to { background-position: 0 80px; }
+}
+
+@keyframes heatHaze {
+    0%, 100% { transform: skewX(0deg) translateY(0); }
+    50% { transform: skewX(3deg) translateY(-10px); }
+}
