@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Traveloop - Login</title>
+    <style>
+        body { background: #f8f9fa; height: 100vh; display: flex; align-items: center; }
+        .login-card { width: 100%; max-width: 400px; padding: 20px; margin: auto; }
+    </style>
+</head>
+<body>
+    <div class="card login-card shadow-sm">
+        <div class="card-body">
+            <h3 class="text-center mb-4">Traveloop</h3>
+            <form action="/dashboard">
+                <div class="mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" placeholder="name@example.com" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+            <div class="text-center mt-3">
+                <small>Don't have an account? <a href="#">Sign Up</a></small>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

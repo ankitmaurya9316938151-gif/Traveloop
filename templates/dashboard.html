@@ -1,0 +1,115 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Traveloop - Dashboard</title>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-primary mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">Traveloop</a>
+            <a href="/" class="btn btn-outline-light btn-sm">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Welcome back, Traveler!</h2>
+            <a href="/create-trip" class="btn btn-success">+ Plan New Trip</a>
+        </div>
+
+        <h4>My Trips</h4>
+        <div class="row mt-3">
+            {% for trip in trips %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ trip.name }}</h5>
+                        <p class="card-text text-muted small">{{ trip.dates }}</p>
+                        <p class="badge bg-info text-dark">{{ trip.destinations }} Destinations</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 d-flex justify-content-between">
+                        <button class="btn btn-sm btn-outline-primary">View</button>
+                        <button class="btn btn-sm btn-outline-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Traveloop | Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .sidebar { height: 100vh; background: #1a237e; color: white; position: fixed; width: 250px; }
+        .main-content { margin-left: 250px; padding: 30px; }
+        .nav-link { color: rgba(255,255,255,0.8); margin: 10px 15px; border-radius: 8px; }
+        .nav-link.active { background: rgba(255,255,255,0.2); color: white; }
+        .stat-card { border: none; border-radius: 12px; transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="p-4 text-center">
+        <h3 class="fw-bold">Traveloop ✈️</h3>
+        <span class="badge bg-primary">Hackathon v1.0</span>
+    </div>
+    <nav class="nav flex-column mt-3">
+        <a class="nav-link active" href="/dashboard"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+        <a class="nav-link" href="/"><i class="bi bi-wallet2 me-2"></i> Budget Tracker</a>
+        <a class="nav-link" href="#"><i class="bi bi-map me-2"></i> Itinerary</a>
+        <a class="nav-link" href="#"><i class="bi bi-person me-2"></i> Profile</a>
+    </nav>
+</div>
+
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Welcome back, Traveler! 👋</h1>
+        <a href="/create-trip" class="btn btn-primary btn-lg rounded-pill">+ Plan New Trip</a>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card stat-card bg-white p-4">
+                <p class="text-muted mb-1">Active Trips</p>
+                <h2 class="fw-bold">{{ trips|length }}</h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card bg-white p-4">
+                <p class="text-muted mb-1">Total Budget Tracked</p>
+                <h2 class="fw-bold text-success">₹{{ trips|sum(attribute='budget') }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="fw-bold mb-3">Recent Trips</h4>
+    <div class="row">
+        {% for trip in trips[:4] %}
+        <div class="col-md-6 mb-4">
+            <div class="card stat-card h-100">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-1">{{ trip.destination }}</h5>
+                        <p class="text-muted small mb-0">ID: #00{{ trip.id }}</p>
+                    </div>
+                    <a href="/" class="btn btn-outline-primary btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>
