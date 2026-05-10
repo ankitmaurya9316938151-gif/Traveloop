@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Traveloop{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink:    #0d0d0d;
+      --cream:  #faf7f2;
+      --sand:   #e8e0d0;
+      --teal:   #1a7a6e;
+      --teal-l: #2a9d8f;
+      --amber:  #e9a84c;
+      --rose:   #c0392b;
+      --mid:    #6b6b6b;
+      --card:   #ffffff;
+      --radius: 16px;
+      --shadow: 0 4px 24px rgba(0,0,0,.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    /* NAV */
+    nav {
+      background: var(--ink);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--cream);
+      letter-spacing: -.5px;
+    }
+    .nav-logo span { color: var(--amber); }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a {
+      color: #ccc;
+      font-size: .9rem;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--amber); }
+    .nav-btn {
+      background: var(--teal);
+      color: #fff !important;
+      padding: .4rem 1rem;
+      border-radius: 8px;
+      font-weight: 600 !important;
+    }
+    .nav-btn:hover { background: var(--teal-l) !important; color: #fff !important; }
+    /* FLASH */
+    .flash-wrap { padding: .75rem 2rem 0; }
+    .flash {
+      padding: .75rem 1.25rem;
+      border-radius: 10px;
+      margin-bottom: .5rem;
+      font-size: .9rem;
+      font-weight: 500;
+    }
+    .flash.success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+    .flash.danger  { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+    .flash.warning { background: #fff3cd; color: #856404; border-left: 4px solid #ffc107; }
+    .flash.info    { background: #d1ecf1; color: #0c5460; border-left: 4px solid #17a2b8; }
+    /* MAIN */
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+    /* CARD */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.75rem;
+    }
+    /* BUTTON */
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .6rem 1.4rem;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .2s;
+    }
+    .btn-primary { background: var(--teal);  color: #fff; }
+    .btn-primary:hover { background: var(--teal-l); transform: translateY(-1px); }
+    .btn-amber  { background: var(--amber);  color: #fff; }
+    .btn-amber:hover  { opacity: .9; }
+    .btn-outline {
+      background: transparent;
+      color: var(--teal);
+      border: 2px solid var(--teal);
+    }
+    .btn-outline:hover { background: var(--teal); color: #fff; }
+    .btn-danger { background: var(--rose); color: #fff; }
+    /* FORM */
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-weight: 600; font-size: .85rem; margin-bottom: .4rem; color: var(--mid); }
+    .form-control {
+      width: 100%;
+      padding: .7rem 1rem;
+      border: 2px solid var(--sand);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .95rem;
+      transition: border .2s;
+      background: var(--cream);
+    }
+    .form-control:focus { outline: none; border-color: var(--teal); background: #fff; }
+    textarea.form-control { resize: vertical; min-height: 100px; }
+    /* PAGE HEADER */
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2rem;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+    }
+    /* BADGE */
+    .badge {
+      display: inline-block;
+      padding: .25rem .7rem;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+    .badge-teal   { background: #d0f0ec; color: var(--teal); }
+    .badge-amber  { background: #fdf0d5; color: #b07d1a; }
+    .badge-rose   { background: #fde8e6; color: var(--rose); }
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: .8rem;
+      color: var(--mid);
+      border-top: 1px solid var(--sand);
+      margin-top: 3rem;
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<nav>
+  <a href="{{ url_for('index') }}" class="nav-logo">Travel<span>oop</span></a>
+  <div class="nav-links">
+    {% if session.user %}
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('my_trips') }}">My Trips</a>
+      <a href="{{ url_for('city_search') }}">Explore</a>
+      <a href="{{ url_for('user_profile') }}">Profile</a>
+      <a href="{{ url_for('logout') }}" class="nav-btn">Logout</a>
+    {% else %}
+      <a href="{{ url_for('login') }}">Login</a>
+      <a href="{{ url_for('register') }}" class="nav-btn">Sign Up</a>
+    {% endif %}
+  </div>
+</nav>
+
+<div class="flash-wrap">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+      <div class="flash {{ cat }}">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+{% block content %}{% endblock %}
+
+<footer>
+  © 2024 Traveloop &nbsp;•&nbsp; Plan smarter, travel better 🌍
+</footer>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

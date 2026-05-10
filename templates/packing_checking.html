@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Packing List for {{ trip.destination if trip.destination else 'Trip' }}</h2>
+        <a href="{{ url_for('my_trips') }}" class="btn btn-outline-secondary btn-sm">Back to Trips</a>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <form method="POST" class="row g-3">
+                <input type="hidden" name="action" value="add">
+                <div class="col-md-6">
+                    <input type="text" name="item" class="form-control" placeholder="What do you need to pack?" required>
+                </div>
+                <div class="col-md-4">
+                    <select name="category" class="form-select">
+                        <option value="General">General</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Toiletries">Toiletries</option>
+                        <option value="Documents">Documents</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 50px;">Status</th>
+                        <th>Item</th>
+                        <th>Category</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if trip['packing_list'] %}
+                        {% for item in trip['packing_list'] %}
+                        <tr>
+                            <td>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="action" value="toggle">
+                                    <input type="hidden" name="idx" value="{{ loop.index0 }}">
+                                    <button type="submit" class="btn btn-sm {{ 'btn-success' if item.packed else 'btn-outline-secondary' }}">
+                                        {% if item.packed %} ✓ {% else %} ○ {% endif %}
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="{{ 'text-decoration-line-through text-muted' if item.packed }}">
+                                {{ item.item }}
+                            </td>
+                            <td>
+                                <span class="badge bg-info text-dark">{{ item.category }}</span>
+                            </td>
+                            <td class="text-end">
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="idx" value="{{ loop.index0 }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Remove this item?')">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">
+                                Your packing list is empty. Start adding items above!
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

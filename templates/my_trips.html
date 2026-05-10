@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}My Trips – Traveloop{% endblock %}
+
+{% block extra_css %}
+<style>
+  .trips-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--ink); color: #fff; }
+  thead th { padding: .9rem 1.25rem; text-align: left; font-size: .85rem; font-weight: 600; }
+  tbody tr { border-bottom: 1px solid var(--sand); transition: background .15s; }
+  tbody tr:hover { background: #f5f9f8; }
+  tbody td { padding: .9rem 1.25rem; font-size: .9rem; }
+  .trip-title { font-weight: 700; }
+  .destination-pill {
+    display: inline-block;
+    background: #d0f0ec;
+    color: var(--teal);
+    padding: .2rem .65rem;
+    border-radius: 20px;
+    font-size: .8rem;
+    font-weight: 600;
+  }
+  .action-links { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .action-links a {
+    font-size: .8rem;
+    padding: .3rem .7rem;
+    border-radius: 6px;
+    font-weight: 600;
+    background: var(--cream);
+    color: var(--teal);
+    border: 1px solid var(--sand);
+    transition: all .15s;
+  }
+  .action-links a:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>My Trips ✈️</h1>
+    <a href="{{ url_for('create_trip') }}" class="btn btn-primary">+ New Trip</a>
+  </div>
+
+  {% if trips %}
+  <div class="card trips-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Trip Name</th>
+          <th>Destination</th>
+          <th>Dates</th>
+          <th>Budget</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for trip in trips %}
+        <tr>
+          <td style="color:var(--mid)">{{ loop.index }}</td>
+          <td class="trip-title">{{ trip.title }}</td>
+          <td><span class="destination-pill">📍 {{ trip.destination }}</span></td>
+          <td style="color:var(--mid); font-size:.85rem">
+            {{ trip.start_date or '—' }} → {{ trip.end_date or '—' }}
+          </td>
+          <td><strong>₹{{ "%.0f"|format(trip.budget) }}</strong></td>
+          <td>
+            <div class="action-links">
+              <a href="{{ url_for('itinerary_view', trip_id=trip.id) }}">Itinerary</a>
+              <a href="{{ url_for('trip_budget', trip_id=trip.id) }}">Budget</a>
+              <a href="{{ url_for('packing_checking', trip_id=trip.id) }}">Packing</a>
+              <a href="{{ url_for('activity', trip_id=trip.id) }}">Activities</a>
+              <a href="{{ url_for('trip_notes', trip_id=trip.id) }}">Notes</a>
+              <a href="{{ url_for('shared_itinerary', trip_id=trip.id) }}">Share</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="card" style="text-align:center; padding:3rem">
+    <p style="font-size:3rem">🗺️</p>
+    <h2 style="font-family:'Playfair Display',serif; margin:.5rem 0">No trips yet</h2>
+    <p style="color:var(--mid); margin-bottom:1.5rem">Create your first trip to get started!</p>
+    <a href="{{ url_for('create_trip') }}" class="btn btn-primary">+ Create Trip</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

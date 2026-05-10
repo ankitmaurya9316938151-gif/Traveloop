@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Share Trip – {{ trip.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .trip-nav { background:#fff; border-bottom:1px solid var(--sand); padding:.75rem 2rem; display:flex; gap:1rem; flex-wrap:wrap; }
+  .trip-nav a { font-size:.85rem; font-weight:600; color:var(--mid); padding:.4rem .9rem; border-radius:8px; transition:all .2s; }
+  .trip-nav a:hover, .trip-nav a.active { background:var(--teal); color:#fff; }
+
+  .share-layout { display:grid; grid-template-columns:1fr 340px; gap:1.5rem; align-items:start; }
+  @media(max-width:768px){ .share-layout { grid-template-columns:1fr; } }
+
+  .share-preview {
+    background:linear-gradient(135deg, var(--ink) 0%, #1a3a38 100%);
+    color:#fff; border-radius:20px; padding:2rem; margin-bottom:1.5rem;
+  }
+  .share-preview h2 { font-family:'Playfair Display',serif; font-size:1.5rem; margin-bottom:.25rem; }
+  .share-preview p { opacity:.75; }
+
+  .collaborator-item {
+    display:flex; align-items:center; gap:1rem;
+    background:#fff; border-radius:12px; padding:1rem 1.25rem;
+    margin-bottom:.6rem; box-shadow:0 1px 6px rgba(0,0,0,.05);
+  }
+  .avatar-circle {
+    width:40px; height:40px; border-radius:50%;
+    background:var(--teal); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:1rem; flex-shrink:0;
+  }
+  .collab-name { font-weight:600; }
+  .collab-role { font-size:.8rem; color:var(--mid); }
+
+  .share-link-box {
+    background:var(--cream); border:2px dashed var(--sand);
+    border-radius:12px; padding:1rem 1.25rem;
+    font-size:.85rem; font-family:monospace;
+    word-break:break-all; color:var(--mid); margin-bottom:1rem;
+  }
+  .itinerary-preview-item {
+    display:flex; gap:.75rem; align-items:flex-start;
+    padding:.75rem 0; border-bottom:1px solid var(--sand);
+  }
+  .itinerary-preview-item:last-child { border-bottom:none; }
+  .day-dot {
+    width:10px; height:10px; border-radius:50%;
+    background:var(--teal); flex-shrink:0; margin-top:5px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="trip-nav">
+  <a href="{{ url_for('itinerary_view', trip_id=trip.id) }}">📅 Itinerary</a>
+  <a href="{{ url_for('activity', trip_id=trip.id) }}">🎯 Activities</a>
+  <a href="{{ url_for('packing_checking', trip_id=trip.id) }}">🎒 Packing</a>
+  <a href="{{ url_for('trip_budget', trip_id=trip.id) }}">💰 Budget</a>
+  <a href="{{ url_for('trip_notes', trip_id=trip.id) }}">📝 Notes</a>
+  <a href="{{ url_for('shared_itinerary', trip_id=trip.id) }}" class="active">👥 Share</a>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <h1>👥 Share Trip</h1>
+    <span class="badge badge-teal">{{ trip.destination }}</span>
+  </div>
+
+  <div class="share-layout">
+    <div>
+      <div class="share-preview">
+        <h2>📍 {{ trip.destination }}</h2>
+        <p>{{ trip.title }}</p>
+        <p style="margin-top:.75rem; font-size:.85rem">
+          📅 {{ trip.start_date or 'TBD' }} → {{ trip.end_date or 'TBD' }}
+          &nbsp;|&nbsp; 💰 ₹{{ "%.0f"|format(trip.budget) }}
+        </p>
+      </div>
+
+      <div class="card" style="margin-bottom:1.5rem">
+        <h3 style="font-family:'Playfair Display',serif; margin-bottom:1rem">Itinerary Preview</h3>
+        {% if trip.itinerary %}
+          {% for entry in trip.itinerary[:5] %}
+          <div class="itinerary-preview-item">
+            <div class="day-dot"></div>
+            <div>
+              <div style="font-size:.75rem; font-weight:700; color:var(--amber)">{{ entry.day }} {{ entry.time or '' }}</div>
+              <div style="font-size:.9rem">{{ entry.entry }}</div>
+            </div>
+          </div>
+          {% endfor %}
+          {% if trip.itinerary|length > 5 %}
+            <p style="color:var(--mid); font-size:.85rem; margin-top:.5rem">+ {{ trip.itinerary|length - 5 }} more entries</p>
+          {% endif %}
+        {% else %}
+          <p style="color:var(--mid)">No itinerary added yet.</p>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h3 style="font-family:'Playfair Display',serif; margin-bottom:1rem">Collaborators</h3>
+        {% if trip.shared_with %}
+          {% for username in trip.shared_with %}
+          <div class="collaborator-item">
+            <div class="avatar-circle">{{ username[0].upper() }}</div>
+            <div>
+              <div class="collab-name">{{ username }}</div>
+              <div class="collab-role">Can view</div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p style="color:var(--mid)">No collaborators yet. Share below!</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Share sidebar -->
+    <div>
+      <div class="card" style="margin-bottom:1.25rem">
+        <h3 style="font-family:'Playfair Display',serif; margin-bottom:1rem">Share with a Friend</h3>
+        <form method="POST">
+          <div class="form-group">
+            <label>Their Username</label>
+            <input type="text" name="share_with" class="form-control" placeholder="username" required />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%">📤 Share Trip</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3 style="font-family:'Playfair Display',serif; margin-bottom:.75rem">Share Link</h3>
+        <p style="color:var(--mid); font-size:.85rem; margin-bottom:.75rem">
+          Copy this link to share your public itinerary:
+        </p>
+        <div class="share-link-box">
+          {{ request.host_url }}trip/{{ trip.id }}/share
+        </div>
+        <button onclick="navigator.clipboard.writeText('{{ request.host_url }}trip/{{ trip.id }}/share'); this.textContent='✅ Copied!'" class="btn btn-outline" style="width:100%">
+          📋 Copy Link
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

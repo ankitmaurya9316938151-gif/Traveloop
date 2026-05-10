@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Activities – {{ trip.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .trip-nav { background:#fff; border-bottom:1px solid var(--sand); padding:.75rem 2rem; display:flex; gap:1rem; flex-wrap:wrap; }
+  .trip-nav a { font-size:.85rem; font-weight:600; color:var(--mid); padding:.4rem .9rem; border-radius:8px; transition:all .2s; }
+  .trip-nav a:hover, .trip-nav a.active { background:var(--teal); color:#fff; }
+
+  .act-layout { display:grid; grid-template-columns:1fr 340px; gap:1.5rem; align-items:start; }
+  @media(max-width:768px){ .act-layout { grid-template-columns:1fr; } }
+
+  .activity-item {
+    background:#fff; border-radius:14px; padding:1.25rem 1.5rem;
+    margin-bottom:1rem; box-shadow:var(--shadow);
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:1rem; border-left:4px solid var(--amber);
+  }
+  .activity-item h4 { font-weight:700; margin-bottom:.25rem; }
+  .activity-item p { font-size:.85rem; color:var(--mid); }
+  .activity-cost {
+    font-family:'Playfair Display',serif;
+    font-size:1.2rem; font-weight:700;
+    color:var(--teal); white-space:nowrap;
+  }
+  .total-bar {
+    background: linear-gradient(135deg,var(--teal),var(--teal-l));
+    color:#fff; border-radius:14px; padding:1.25rem 1.5rem;
+    margin-bottom:1.5rem;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .total-bar .label { font-size:.85rem; opacity:.8; }
+  .total-bar .amount { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="trip-nav">
+  <a href="{{ url_for('itinerary_view', trip_id=trip.id) }}">📅 Itinerary</a>
+  <a href="{{ url_for('activity', trip_id=trip.id) }}" class="active">🎯 Activities</a>
+  <a href="{{ url_for('packing_checking', trip_id=trip.id) }}">🎒 Packing</a>
+  <a href="{{ url_for('trip_budget', trip_id=trip.id) }}">💰 Budget</a>
+  <a href="{{ url_for('trip_notes', trip_id=trip.id) }}">📝 Notes</a>
+  <a href="{{ url_for('shared_itinerary', trip_id=trip.id) }}">👥 Share</a>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <h1>🎯 Activities</h1>
+    <span class="badge badge-teal">{{ trip.destination }}</span>
+  </div>
+
+  <div class="act-layout">
+    <!-- Activity list -->
+    <div>
+      {% if trip.activities %}
+        {% set total = trip.activities | sum(attribute='cost') %}
+        <div class="total-bar">
+          <div>
+            <div class="label">Total Activity Cost</div>
+            <div class="amount">₹{{ "%.0f"|format(total) }}</div>
+          </div>
+          <span style="font-size:2rem">🎯</span>
+        </div>
+
+        {% for act in trip.activities %}
+        <div class="activity-item">
+          <div>
+            <h4>{{ act.name }}</h4>
+            <p>📅 {{ act.date or 'No date set' }}</p>
+            {% if act.notes %}<p style="margin-top:.25rem">📝 {{ act.notes }}</p>{% endif %}
+          </div>
+          <div class="activity-cost">₹{{ "%.0f"|format(act.cost) }}</div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="card" style="text-align:center; padding:3rem">
+          <p style="font-size:3rem">🎯</p>
+          <h3 style="font-family:'Playfair Display',serif; margin:.5rem 0">No activities yet</h3>
+          <p style="color:var(--mid)">Add tours, experiences, and things to do!</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Add form -->
+    <div class="card">
+      <h3 style="font-family:'Playfair Display',serif; margin-bottom:1.25rem">+ Add Activity</h3>
+      <form method="POST">
+        <div class="form-group">
+          <label>Activity Name *</label>
+          <input type="text" name="name" class="form-control" placeholder="e.g. Eiffel Tower Tour" required />
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" name="date" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Cost (₹)</label>
+          <input type="number" name="cost" class="form-control" placeholder="0" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea name="notes" class="form-control" rows="3" placeholder="Booking ref, tips..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Add Activity</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

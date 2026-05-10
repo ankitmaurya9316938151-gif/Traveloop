@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Profile – {{ user }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-hero {
+    background:linear-gradient(135deg, var(--ink) 0%, #1a3a38 100%);
+    color:#fff; padding:3rem 2rem 4rem; text-align:center;
+  }
+  .avatar-large {
+    width:90px; height:90px; border-radius:50%;
+    background:var(--amber); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display',serif;
+    font-size:2.5rem; font-weight:700;
+    margin:0 auto 1rem; box-shadow:0 0 0 4px rgba(255,255,255,.2);
+  }
+  .profile-hero h1 { font-family:'Playfair Display',serif; font-size:1.8rem; margin-bottom:.25rem; }
+  .profile-hero p { opacity:.7; }
+
+  .profile-content {
+    max-width:900px; margin:-2rem auto 0;
+    padding:0 1rem 3rem; position:relative; z-index:1;
+  }
+  .profile-grid { display:grid; grid-template-columns:320px 1fr; gap:1.5rem; align-items:start; }
+  @media(max-width:768px){ .profile-grid { grid-template-columns:1fr; } }
+
+  .stat-pills { display:flex; gap:.75rem; flex-wrap:wrap; margin-bottom:1.5rem; justify-content:center; }
+  .stat-pill {
+    background:rgba(255,255,255,.15); border-radius:20px;
+    padding:.35rem 1rem; font-size:.85rem; font-weight:600;
+  }
+
+  .recent-trip {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:.85rem 0; border-bottom:1px solid var(--sand);
+  }
+  .recent-trip:last-child { border-bottom:none; }
+  .recent-trip h4 { font-weight:700; margin-bottom:.15rem; }
+  .recent-trip p { font-size:.8rem; color:var(--mid); }
+  .recent-trip a { font-size:.82rem; font-weight:600; color:var(--teal); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-hero">
+  <div class="avatar-large">{{ user[0].upper() }}</div>
+  <h1>{{ user }}</h1>
+  <p>{{ user_data.get('email', 'No email set') }}</p>
+  <div class="stat-pills">
+    <span class="stat-pill">✈️ {{ trips|length }} Trips</span>
+    <span class="stat-pill">📅 Joined {{ user_data.get('joined', '2024') }}</span>
+  </div>
+</div>
+
+<div class="profile-content">
+  <div class="profile-grid">
+    <!-- Edit profile -->
+    <div class="card">
+      <h3 style="font-family:'Playfair Display',serif; margin-bottom:1.25rem">Edit Profile</h3>
+      <form method="POST">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" class="form-control" value="{{ user }}" disabled style="opacity:.6" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" class="form-control"
+            value="{{ user_data.get('email', '') }}"
+            placeholder="you@example.com" />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Save Changes</button>
+      </form>
+
+      <hr style="border:none; border-top:1px solid var(--sand); margin:1.5rem 0" />
+
+      <div style="display:flex; flex-direction:column; gap:.6rem">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline" style="text-align:center">📊 Dashboard</a>
+        <a href="{{ url_for('create_trip') }}" class="btn btn-primary" style="text-align:center">+ New Trip</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger" style="text-align:center">Logout</a>
+      </div>
+    </div>
+
+    <!-- Recent trips -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem">
+        <h3 style="font-family:'Playfair Display',serif">My Trips</h3>
+        <a href="{{ url_for('my_trips') }}" style="font-size:.85rem; color:var(--teal); font-weight:600">View All →</a>
+      </div>
+      {% if trips %}
+        {% for trip in trips %}
+        <div class="recent-trip">
+          <div>
+            <h4>{{ trip.title }}</h4>
+            <p>📍 {{ trip.destination }} &nbsp;•&nbsp; {{ trip.start_date or 'No date' }} → {{ trip.end_date or '—' }}</p>
+          </div>
+          <a href="{{ url_for('itinerary_view', trip_id=trip.id) }}">View →</a>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div style="text-align:center; padding:2rem; color:var(--mid)">
+          <p style="font-size:2rem">🗺️</p>
+          <p>No trips yet</p>
+          <a href="{{ url_for('create_trip') }}" class="btn btn-primary" style="margin-top:1rem">Create First Trip</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

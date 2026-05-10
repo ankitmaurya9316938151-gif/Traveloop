@@ -1,383 +1,155 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Traveloop | Budget Tracker</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f8f9fa; }
-        .card { border-radius: 15px; }
-    </style>
-</head>
-<body>
-<div class="container py-5">
-    <h1 class="text-center mb-4 text-primary">Traveloop Tracker ✈️</h1>
+{% extends "base.html" %}
+{% block title %}Traveloop – Plan Your Journey{% endblock %}
 
-    <div class="card shadow-sm p-4 mb-5">
-        <h4>Plan a New Trip</h4>
-        <form action="/add_trip" method="POST" class="row g-3">
-            <div class="col-md-6">
-                <input type="text" name="destination" class="form-control" placeholder="Destination Name" required>
-            </div>
-            <div class="col-md-4">
-                <input type="number" name="budget" class="form-control" placeholder="Total Budget (₹)" required>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">Add Trip</button>
-            </div>
-        </form>
+{% block extra_css %}
+<style>
+  .hero {
+    min-height: calc(100vh - 64px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a3a38 60%, #1a7a6e 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(233,168,76,.2);
+    color: var(--amber);
+    padding: .4rem 1rem;
+    border-radius: 20px;
+    font-size: .85rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(233,168,76,.3);
+    position: relative;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    color: #fff;
+    line-height: 1.1;
+    max-width: 800px;
+    position: relative;
+  }
+  .hero h1 em { font-style: normal; color: var(--amber); }
+  .hero p {
+    color: rgba(255,255,255,.7);
+    font-size: 1.1rem;
+    max-width: 560px;
+    margin: 1.5rem auto;
+    line-height: 1.7;
+    position: relative;
+  }
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+  }
+  .btn-hero-primary {
+    background: var(--amber); color: #fff;
+    padding: .85rem 2rem; border-radius: 12px;
+    font-size: 1rem; font-weight: 700;
+    transition: all .2s;
+  }
+  .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(233,168,76,.4); }
+  .btn-hero-outline {
+    background: transparent;
+    color: #fff;
+    border: 2px solid rgba(255,255,255,.4);
+    padding: .85rem 2rem; border-radius: 12px;
+    font-size: 1rem; font-weight: 600;
+    transition: all .2s;
+  }
+  .btn-hero-outline:hover { border-color: #fff; background: rgba(255,255,255,.08); }
+
+  /* FEATURES */
+  .features { padding: 5rem 2rem; }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .feature-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 2px 16px rgba(0,0,0,.06);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,.1); }
+  .feature-icon {
+    font-size: 2.5rem; margin-bottom: 1rem;
+  }
+  .feature-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; margin-bottom: .5rem;
+  }
+  .feature-card p { color: var(--mid); font-size: .9rem; line-height: 1.6; }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; text-align: center; margin-bottom: .75rem;
+  }
+  .section-sub { text-align: center; color: var(--mid); margin-bottom: 3rem; font-size: 1rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-tag">✈️ Your Travel Companion</div>
+  <h1>Plan Every Journey.<br><em>Remember Every Moment.</em></h1>
+  <p>Traveloop brings your itineraries, budgets, packing lists, and memories into one beautiful place.</p>
+  <div class="hero-btns">
+    <a href="{{ url_for('register') }}" class="btn-hero-primary">Start Planning Free →</a>
+    <a href="{{ url_for('login') }}" class="btn-hero-outline">Sign In</a>
+  </div>
+</section>
+
+<section class="features">
+  <h2 class="section-title">Everything You Need to Travel Better</h2>
+  <p class="section-sub">From dreaming to booking to boarding — Traveloop covers every step.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🗺️</div>
+      <h3>Smart Itineraries</h3>
+      <p>Build day-by-day plans with times, places, and notes. Share with travel companions instantly.</p>
     </div>
-
-    <div class="row">
-        {% for trip in trips %}
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h3 class="card-title text-success">{{ trip.destination }}</h3>
-                    <p class="mb-1 text-muted">Initial Budget: <strong>₹{{ trip.budget }}</strong></p>
-                    <p class="mb-3">Remaining Balance: 
-                        <span class="badge {% if trip.balance < 0 %}bg-danger{% else %}bg-success{% endif %} fs-6">
-                            ₹{{ trip.balance }}
-                        </span>
-                    </p>
-
-                    <form action="/add_expense/{{ trip.id }}" method="POST" class="input-group mb-3">
-                        <input type="text" name="item" class="form-control form-control-sm" placeholder="Expense Item" required>
-                        <input type="number" name="amount" class="form-control form-control-sm" placeholder="₹" required>
-                        <button class="btn btn-outline-danger btn-sm" type="submit">Add Expense</button>
-                    </form>
-
-                    <ul class="list-group list-group-flush small">
-                        {% for exp in trip.expenses %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ exp.item }}
-                            <span>₹{{ exp.amount }}</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
+    <div class="feature-card">
+      <div class="feature-icon">💰</div>
+      <h3>Budget Tracker</h3>
+      <p>Set your trip budget, log expenses by category, and always know your remaining balance.</p>
     </div>
-</div>
-</body>
-</html> -->
-<!-- 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traveloop Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .sidebar { height: 100vh; background: #1e293b; color: white; position: fixed; width: 260px; z-index: 100; }
-        .sidebar-link { color: #cbd5e1; text-decoration: none; padding: 12px 20px; display: block; border-radius: 8px; margin: 4px 15px; transition: 0.3s; }
-        .sidebar-link:hover, .sidebar-link.active { background: #334155; color: #38bdf8; }
-        .main-content { margin-left: 260px; padding: 40px; }
-        .card { border: none; border-radius: 15px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: transform 0.2s; }
-        .trip-card:hover { transform: translateY(-5px); }
-        .form-control { border-radius: 8px; border: 1px solid #e2e8f0; }
-        .btn-add { border-radius: 8px; font-weight: 600; }
-    </style>
-</head>
-<body>
-
-    <div class="sidebar d-none d-md-block">
-        <div class="p-4">
-            <h3 class="fw-bold">Traveloop ✈️</h3>
-            <span class="badge bg-primary">Hackathon v1.0</span>
-        </div>
-        <nav class="mt-2">
-            <a href="/" class="sidebar-link active"><i class="bi bi-grid-1x2-fill me-2"></i> Dashboard</a>
-            <a href="#" class="sidebar-link"><i class="bi bi-map me-2"></i> Itinerary Builder</a>
-            <a href="#" class="sidebar-link"><i class="bi bi-wallet2 me-2"></i> Budget Stats</a>
-            <a href="#" class="sidebar-link"><i class="bi bi-journal-text me-2"></i> Trip Notes</a>
-            <hr class="mx-3 border-secondary">
-            <a href="/login" class="sidebar-link text-danger"><i class="bi bi-box-arrow-left me-2"></i> Logout</a>
-        </nav>
+    <div class="feature-card">
+      <div class="feature-icon">🎒</div>
+      <h3>Packing Checklist</h3>
+      <p>Never forget sunscreen again. Build custom lists, check items off as you pack.</p>
     </div>
-
-    <div class="main-content">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center mb-5">
-                <div>
-                    <h1 class="fw-bold text-dark">Traveloop Tracker</h1>
-                    <p class="text-muted">Plan your journey, track your spending.</p>
-                </div>
-                <div class="text-end">
-                    <span class="text-muted d-block small">Current Date</span>
-                    <span class="fw-bold">May 10, 2026</span>
-                </div>
-            </div>
-
-            <div class="card p-4 mb-5">
-                <h5 class="fw-bold mb-4">Plan a New Trip</h5>
-                <form action="/add_trip" method="POST" class="row g-3">
-                    <div class="col-md-5">
-                        <input type="text" name="destination" class="form-control form-control-lg" placeholder="Destination (e.g. Paris)" required>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="input-group input-group-lg">
-                            <span class="input-group-text">₹</span>
-                            <input type="number" name="budget" class="form-control" placeholder="Total Budget" required>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary btn-lg w-100 btn-add shadow-sm">Create Trip</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="row">
-                {% for trip in trips %}
-                <div class="col-xl-6 mb-4">
-                    <div class="card trip-card">
-                        <div class="card-header bg-white pt-3 border-0">
-                            <div class="d-flex justify-content-between">
-                                <h3 class="fw-bold text-success mb-0">{{ trip.destination }}</h3>
-                                <span class="badge bg-light text-dark border p-2">ID: #00{{ trip.id }}</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="row text-center mb-4">
-                                <div class="col-4">
-                                    <small class="text-muted d-block">Budget</small>
-                                    <span class="fw-bold">₹{{ trip.budget }}</span>
-                                </div>
-                                <div class="col-4">
-                                    <small class="text-muted d-block">Spent</small>
-                                    <span class="fw-bold text-danger">₹{{ trip.total_spent }}</span>
-                                </div>
-                                <div class="col-4 border-start">
-                                    <small class="text-muted d-block">Balance</small>
-                                    <span class="fw-bold text-primary">₹{{ trip.balance }}</span>
-                                </div>
-                            </div>
-
-                            <form action="/add_expense/{{ trip.id }}" method="POST" class="input-group mb-3">
-                                <input type="text" name="item" class="form-control" placeholder="Expense description" required>
-                                <input type="number" name="amount" class="form-control" placeholder="Amount" style="max-width: 120px;" required>
-                                <button class="btn btn-outline-danger" type="submit">Add Expense</button>
-                            </form>
-
-                            <ul class="list-group list-group-flush small">
-                                {% for exp in trip.expenses %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center bg-light rounded mb-1 border-0">
-                                    {{ exp.item }}
-                                    <span class="fw-bold text-dark">₹{{ exp.amount }}</span>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏙️</div>
+      <h3>City Explorer</h3>
+      <p>Search destinations, discover attractions, and add activities directly to your trip.</p>
     </div>
-
-</body>
-</html> -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traveloop - Plan Your Journey</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        :root {
-            --mmt-blue: #0a223d;
-            --mmt-gradient: linear-gradient(180deg, #051322 0%, #0b213a 100%);
-            --mmt-accent: #008cff;
-        }
-
-        body { background-color: #f2f2f2; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-
-        /* Header & Navigation */
-        .mmt-header {
-            background: var(--mmt-gradient);
-            padding: 10px 0 80px 0;
-            color: white;
-        }
-        .navbar-brand { font-weight: 900; font-size: 1.8rem; color: white !important; letter-spacing: -1px; }
-
-        /* Floating Search/Action Card */
-        .search-container {
-            margin-top: -60px;
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        }
-
-        .input-box {
-            border: 1px solid #e7e7e7;
-            padding: 12px 20px;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-        .input-box:hover { background: #f2f8ff; border-color: var(--mmt-accent); }
-        .input-box label { color: #4a4a4a; font-size: 12px; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 5px; }
-        .input-box input { border: none; background: transparent; font-size: 20px; font-weight: 900; width: 100%; outline: none; color: #000; }
-
-        /* Feature Tabs */
-        .nav-pills .nav-link { color: #4a4a4a; font-weight: 700; border-radius: 50px; padding: 12px 25px; margin: 0 5px; }
-        .nav-pills .nav-link.active { background-color: var(--mmt-accent); color: white; box-shadow: 0 4px 10px rgba(0,140,255,0.3); }
-
-        /* Trip Listing Cards */
-        .trip-card {
-            background: white;
-            border-radius: 12px;
-            border: none;
-            margin-bottom: 25px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-        }
-        .trip-card:hover { transform: translateY(-5px); }
-        .trip-header { background: #f9f9f9; border-bottom: 1px solid #eee; padding: 20px; }
-        
-        .btn-mmt {
-            background: linear-gradient(90deg, #53b2fe, #0695ff);
-            border: none;
-            border-radius: 50px;
-            padding: 12px 50px;
-            font-weight: 900;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            position: absolute;
-            bottom: -28px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            box-shadow: 0 5px 15px rgba(0,140,255,0.4);
-        }
-        .btn-mmt:hover { color: white; opacity: 0.9; }
-
-        .stat-box { padding: 10px; border-radius: 8px; background: #f8faff; }
-        .balance-badge { font-size: 1.1rem; padding: 8px 15px; border-radius: 50px; }
-    </style>
-</head>
-<body>
-
-    <header class="mmt-header">
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container">
-                <a class="navbar-brand" href="/">TRAVELOOP <i class="bi bi-airplane-engines"></i></a>
-                <div class="ms-auto d-flex align-items-center text-white">
-                    <div class="me-4 d-none d-md-block">
-                        <small class="d-block opacity-75">Hackathon Mode</small>
-                        <span class="fw-bold text-warning">Project RentO Core</span>
-                    </div>
-                    <a href="/login" class="btn btn-outline-light rounded-pill px-4">Login</a>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <main class="container">
-        <div class="search-container position-relative mb-5">
-            <ul class="nav nav-pills mb-4 justify-content-center">
-                <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-geo-alt-fill me-2"></i>Trips</a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-cash-stack me-2"></i>Expenses</a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-map-fill me-2"></i>Itinerary</a></li>
-            </ul>
-
-            <form action="/add_trip" method="POST">
-                <div class="row g-3">
-                    <div class="col-md-7">
-                        <div class="input-box">
-                            <label>Where to?</label>
-                            <input type="text" name="destination" placeholder="Enter Destination (e.g. Goa, Paris)" required>
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="input-box">
-                            <label>Total Budget</label>
-                            <input type="number" name="budget" placeholder="₹ 0.00" required>
-                        </div>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-mmt">Create Trip Plan</button>
-            </form>
-        </div>
-
-        <div class="row mt-5 pt-4">
-            <div class="col-12 mb-4">
-                <h3 class="fw-bold"><i class="bi bi-briefcase me-2"></i>Your Planned Journeys</h3>
-            </div>
-            
-            {% for trip in trips %}
-            <div class="col-lg-6">
-                <div class="trip-card">
-                    <div class="trip-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="text-muted small fw-bold">DESTINATION</span>
-                            <h2 class="fw-bold text-dark mb-0">{{ trip.destination }}</h2>
-                        </div>
-                        <div class="text-end">
-                            <span class="badge {% if trip.balance > 0 %}bg-success{% else %}bg-danger{% endif %} balance-badge">
-                                ₹{{ trip.balance }} Left
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <div class="card-body p-4">
-                        <div class="row mb-4">
-                            <div class="col-4 stat-box text-center">
-                                <small class="text-muted d-block">TOTAL BUDGET</small>
-                                <span class="fw-bold text-dark">₹{{ trip.budget }}</span>
-                            </div>
-                            <div class="col-4 stat-box text-center mx-2" style="width: 30%;">
-                                <small class="text-muted d-block">SPENT</small>
-                                <span class="fw-bold text-danger">₹{{ trip.total_spent }}</span>
-                            </div>
-                        </div>
-
-                        <h6 class="fw-bold mb-3">Add New Expense</h6>
-                        <form action="/add_expense/{{ trip.id }}" method="POST" class="row g-2 mb-4">
-                            <div class="col-7">
-                                <input type="text" name="item" class="form-control" placeholder="Food, Cab, Hotel..." required>
-                            </div>
-                            <div class="col-3">
-                                <input type="number" name="amount" class="form-control" placeholder="₹" required>
-                            </div>
-                            <div class="col-2">
-                                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i></button>
-                            </div>
-                        </form>
-
-                        <div class="expense-list">
-                            <p class="small fw-bold text-muted border-bottom pb-2">EXPENSE LOG</p>
-                            <div style="max-height: 150px; overflow-y: auto;">
-                                {% for exp in trip.expenses %}
-                                <div class="d-flex justify-content-between py-2 border-bottom border-light">
-                                    <span class="text-secondary">{{ exp.item }}</span>
-                                    <span class="fw-bold text-dark">₹{{ exp.amount }}</span>
-                                </div>
-                                {% endfor %}
-                                {% if not trip.expenses %}
-                                <p class="text-muted small text-center py-3">No expenses added yet.</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </main>
-
-    <footer class="container py-5 text-center">
-        <p class="text-muted small">© 2026 Traveloop | Built for Hackathon Excellence</p>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <div class="feature-card">
+      <div class="feature-icon">📝</div>
+      <h3>Trip Notes</h3>
+      <p>Keep reservation numbers, local tips, and personal reflections all in one place.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👥</div>
+      <h3>Share & Collaborate</h3>
+      <p>Share your itinerary with friends and family so everyone stays on the same page.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

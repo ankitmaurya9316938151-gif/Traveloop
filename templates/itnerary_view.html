@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Itinerary – {{ trip.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .trip-nav {
+    background: #fff;
+    border-bottom: 1px solid var(--sand);
+    padding: .75rem 2rem;
+    display: flex; gap: 1rem; flex-wrap: wrap;
+  }
+  .trip-nav a {
+    font-size: .85rem; font-weight: 600;
+    color: var(--mid); padding: .4rem .9rem;
+    border-radius: 8px; transition: all .2s;
+  }
+  .trip-nav a:hover, .trip-nav a.active {
+    background: var(--teal); color: #fff;
+  }
+  .itinerary-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 768px) { .itinerary-layout { grid-template-columns: 1fr; } }
+  .day-group { margin-bottom: 2rem; }
+  .day-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--teal);
+    margin-bottom: .75rem;
+    padding-bottom: .4rem;
+    border-bottom: 2px solid var(--sand);
+  }
+  .entry-item {
+    display: flex; gap: 1rem;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: .75rem;
+    box-shadow: 0 1px 8px rgba(0,0,0,.06);
+    border-left: 3px solid var(--teal);
+  }
+  .entry-time {
+    font-size: .8rem; font-weight: 700;
+    color: var(--amber); white-space: nowrap;
+    min-width: 60px; padding-top: .1rem;
+  }
+  .entry-text { font-size: .95rem; }
+  .add-entry-card { background: #fff; border-radius: 16px; box-shadow: var(--shadow); padding: 1.5rem; }
+  .add-entry-card h3 { font-family: 'Playfair Display', serif; margin-bottom: 1rem; }
+  .trip-info-card {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-l) 100%);
+    color: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .trip-info-card h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: .25rem; }
+  .trip-info-card p { opacity: .85; font-size: .9rem; }
+  .info-row { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+  .info-badge {
+    background: rgba(255,255,255,.2);
+    padding: .3rem .8rem;
+    border-radius: 20px;
+    font-size: .8rem; font-weight: 600;
+  }
+  .empty-itinerary {
+    text-align: center; padding: 3rem 1rem;
+    color: var(--mid);
+  }
+  .empty-itinerary .icon { font-size: 3rem; margin-bottom: .75rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="trip-nav">
+  <a href="{{ url_for('itinerary_view', trip_id=trip.id) }}" class="active">📅 Itinerary</a>
+  <a href="{{ url_for('activity', trip_id=trip.id) }}">🎯 Activities</a>
+  <a href="{{ url_for('packing_checking', trip_id=trip.id) }}">🎒 Packing</a>
+  <a href="{{ url_for('trip_budget', trip_id=trip.id) }}">💰 Budget</a>
+  <a href="{{ url_for('trip_notes', trip_id=trip.id) }}">📝 Notes</a>
+  <a href="{{ url_for('shared_itinerary', trip_id=trip.id) }}">👥 Share</a>
+</div>
+
+<div class="container">
+  <div class="itinerary-layout">
+    <!-- LEFT: Itinerary entries -->
+    <div>
+      <div class="page-header">
+        <h1>{{ trip.title }}</h1>
+      </div>
+
+      {% if trip.itinerary %}
+        {% set days = trip.itinerary | map(attribute='day') | unique | list %}
+        {% for day in days %}
+          <div class="day-group">
+            <div class="day-label">📆 {{ day }}</div>
+            {% for entry in trip.itinerary if entry.day == day %}
+            <div class="entry-item">
+              <div class="entry-time">{{ entry.time or '—' }}</div>
+              <div class="entry-text">{{ entry.entry }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-itinerary card">
+          <div class="icon">📅</div>
+          <p>No itinerary entries yet. Add your first plan →</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- RIGHT: Sidebar -->
+    <div>
+      <div class="trip-info-card">
+        <h2>📍 {{ trip.destination }}</h2>
+        <p>{{ trip.title }}</p>
+        <div class="info-row">
+          <span class="info-badge">📅 {{ trip.start_date or 'TBD' }} → {{ trip.end_date or 'TBD' }}</span>
+          <span class="info-badge">💰 ₹{{ "%.0f"|format(trip.budget) }}</span>
+        </div>
+      </div>
+
+      <div class="add-entry-card">
+        <h3>Add Entry</h3>
+        <form method="POST">
+          <div class="form-group">
+            <label>Day</label>
+            <input type="text" name="day" class="form-control" placeholder="e.g. Day 1" required />
+          </div>
+          <div class="form-group">
+            <label>Time</label>
+            <input type="time" name="time" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>Plan / Activity</label>
+            <textarea name="entry" class="form-control" rows="3" placeholder="What are you doing?" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%">+ Add to Itinerary</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

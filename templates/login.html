@@ -1,33 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Traveloop - Login</title>
-    <style>
-        body { background: #f8f9fa; height: 100vh; display: flex; align-items: center; }
-        .login-card { width: 100%; max-width: 400px; padding: 20px; margin: auto; }
-    </style>
-</head>
-<body>
-    <div class="card login-card shadow-sm">
-        <div class="card-body">
-            <h3 class="text-center mb-4">Traveloop</h3>
-            <form action="/dashboard">
-                <div class="mb-3">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" class="form-control" placeholder="name@example.com" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Login</button>
-            </form>
-            <div class="text-center mt-3">
-                <small>Don't have an account? <a href="#">Sign Up</a></small>
-            </div>
-        </div>
+{% extends "base.html" %}
+{% block title %}{% if register %}Create Account{% else %}Login{% endif %} – Traveloop{% endblock %}
+
+{% block extra_css %}
+<style>
+  .auth-wrap {
+    min-height: calc(100vh - 64px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--cream) 0%, #e8f4f2 100%);
+  }
+  .auth-card {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 8px 48px rgba(0,0,0,.1);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 440px;
+  }
+  .auth-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .auth-logo h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+  }
+  .auth-logo h1 span { color: var(--amber); }
+  .auth-logo p { color: var(--mid); font-size: .9rem; margin-top: .25rem; }
+  .auth-toggle {
+    display: flex;
+    background: var(--cream);
+    border-radius: 12px;
+    padding: .25rem;
+    margin-bottom: 2rem;
+  }
+  .auth-toggle a {
+    flex: 1; text-align: center;
+    padding: .6rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: .9rem;
+    color: var(--mid);
+    transition: all .2s;
+  }
+  .auth-toggle a.active {
+    background: #fff;
+    color: var(--teal);
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  .auth-submit {
+    width: 100%;
+    padding: .85rem;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    margin-top: .5rem;
+  }
+  .auth-submit:hover { background: var(--teal-l); transform: translateY(-1px); }
+  .auth-divider {
+    text-align: center;
+    color: var(--mid);
+    font-size: .85rem;
+    margin: 1.25rem 0;
+    position: relative;
+  }
+  .auth-divider::before, .auth-divider::after {
+    content: '';
+    position: absolute; top: 50%;
+    width: 42%; height: 1px;
+    background: var(--sand);
+  }
+  .auth-divider::before { left: 0; }
+  .auth-divider::after  { right: 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>Travel<span>oop</span></h1>
+      <p>{% if register %}Join thousands of smart travelers{% else %}Welcome back, explorer!{% endif %}</p>
     </div>
-</body>
-</html>
+
+    <div class="auth-toggle">
+      <a href="{{ url_for('login') }}" class="{% if not register %}active{% endif %}">Login</a>
+      <a href="{{ url_for('register') }}" class="{% if register %}active{% endif %}">Sign Up</a>
+    </div>
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" class="form-control" placeholder="your_username" required />
+      </div>
+
+      {% if register %}
+      <div class="form-group">
+        <label>Email (optional)</label>
+        <input type="email" name="email" class="form-control" placeholder="you@example.com" />
+      </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" class="form-control" placeholder="••••••••" required />
+      </div>
+
+      <button type="submit" class="auth-submit">
+        {% if register %}🚀 Create Account{% else %}✈️ Login{% endif %}
+      </button>
+    </form>
+
+    <div class="auth-divider">or</div>
+    <p style="text-align:center; font-size:.9rem; color:var(--mid)">
+      {% if register %}
+        Already have an account? <a href="{{ url_for('login') }}" style="color:var(--teal); font-weight:600;">Login →</a>
+      {% else %}
+        New here? <a href="{{ url_for('register') }}" style="color:var(--teal); font-weight:600;">Create an account →</a>
+      {% endif %}
+    </p>
+  </div>
+</div>
+{% endblock %}
